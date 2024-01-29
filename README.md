@@ -1,4 +1,4 @@
-# Triangles
+# Matrices
 ## Build
 cmake -S . -B release -DCMAKE_BUILD_TYPE=Release 
 
