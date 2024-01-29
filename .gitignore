@@ -1,0 +1,9 @@
+
+*.txt.user
+.vscode
+release
+build
+googletest
+test
+build
+

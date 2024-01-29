@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+clear
+cd build
+if [ $1 = "unit" ]; then
+    echo "Unit tests running..."
+    ./tests/unit_tests $2
+fi
+
