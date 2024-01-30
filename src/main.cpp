@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <exception>
 #include <matrices.hpp>
 #define TEST
 
@@ -24,11 +25,19 @@ int main() {
         auto tmp{0.0};
         std::cin >> tmp;
         data[i] = tmp;
-    }
+    }  
 #else
     std::vector<double> input = {1,2,3,4};
-    Matrix m(input, 2);
-    std::cout << m;
+    matr_t<int> m(3);
+    try
+    {
+        std::cout << m << std::endl;
+    } 
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    
 #endif
 
     return 0;

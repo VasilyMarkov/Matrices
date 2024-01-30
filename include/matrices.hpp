@@ -5,34 +5,87 @@
 #include <cassert>
 namespace matrices {
 
-class Matrix {
-private:
-    int size_;
-    std::unique_ptr<double[]> data_;   
-public:
-    Matrix() {};
-    Matrix(const Matrix& m) {}
-    Matrix(const std::vector<double>& vec, size_t size):size_(size), data_(std::make_unique<double[]>(size_*size_))  {
-        assert(vec.size() == size_*size_);
-        for(auto i = 0; i < vec.size(); ++i) {
-            data_[i] = vec[i];
-        }
+template<typename T>
+struct row_t {
+    size_t size;
+    T* data = nullptr;
+    row_t() {
+    };
+    row_t(size_t n):size(n), data(new T[size]) 
+    {
     }
+    ~row_t() { delete [] data;}
 
-    ~Matrix() = default;
-    size_t size() const {return size_;}
-    double* operator[](size_t row) { return row * size_ + data_.get(); }
-    double& operator()(size_t row, size_t column) const { return data_[row * size_ + column]; }
+    void allocate(size_t n) {
+        size = n;
+        data = new T[size];
+    }
+    T& operator[](size_t n)  
+    {
+        if(n > size)
+            throw std::out_of_range("Out of range");
+        return data[n];
+    }
+    const T& operator[](size_t n) const
+    {
+        if(n > size)
+            throw std::out_of_range("Out of range");
+        return data[n];
+    }
+    friend std::ostream& operator<<(std::ostream& os, const row_t& r) {
+        for(size_t i = 0; i < r.size; ++i) {
+            os << r[i] << ' ';
+        }
+    return os;
+}  
 };
 
-std::ostream& operator<<(std::ostream& os, const Matrix& m) {
-    for(size_t i = 0; i < m.size(); ++i) {
-        for(size_t j = 0; j < m.size(); ++j) {
-            os << m(i, j) << ' ';
-        }
-        os << '\n';
+template<typename T>
+struct matr_t {
+    size_t size;
+    row_t<T>* rows = nullptr;
+    matr_t(size_t n):size(n), rows(new row_t<T>[size]) {
+        allocate();
     }
-    return os;
-}        
+    // static matr_t eye(size_t n) {
+    //     size = n;
+    //     rows = new row_t<T>[size];
+    //     return *this;
+    // }
+    ~matr_t() {
+        delete [] rows;
+    }
+    row_t<T>& operator[](size_t n)
+    {
+        if(n > size)
+            throw std::out_of_range("Out of range");
+        return rows[n];
+    }
+    const row_t<T>& operator[](size_t n) const
+    {
+        if(n > size)
+            throw std::out_of_range("Out of range");
+        return rows[n];
+    }
+    void allocate() {
+        for(auto i = 0; i < size; ++i) {
+            rows[i].allocate(size);
+        }
+        fill(0);
+    }
+    void fill(T value) {
+        for(auto i = 0; i < size; ++i) {
+            for(auto j = 0; j < size; ++j) {
+                rows[i][j] = value;
+            }
+        }
+    }
+    friend std::ostream& operator<<(std::ostream& os, const matr_t<T>& m) {
+        for(size_t i = 0; i < m.size; ++i) {
+            os << m[i] << '\n';
+        }
+        return os;
+    } 
+};
 
 } 
