@@ -21,13 +21,15 @@ protected:
     size_t size_, used_ = 0;
     T* data_ = nullptr;
 protected:
-    row_buf_t(size_t n = 0):data_(n == 0 ? nullptr : static_cast<T*>(::operator new(sizeof(T)*n))), size_(n) {}
     row_buf_t(const row_buf_t& buf) = delete;
     row_buf_t& operator=(const row_buf_t&) = delete; 
+
+    row_buf_t(size_t n = 0):data_(n == 0 ? nullptr : static_cast<T*>(::operator new(sizeof(T)*n))), size_(n) {}
+
     row_buf_t(row_buf_t&& buf) noexcept: size_(buf.size_()), used_(buf.used_), data_(buf.data_) {
-        buf.data_ = nullptr;
         buf.size_ = 0;
         buf.used_ = 0;
+        buf.data_ = nullptr;
     };
 
     row_buf_t& operator=(row_buf_t&& buf) noexcept {
@@ -36,6 +38,7 @@ protected:
         std::swap(used_, buf.used_());
         return *this;
     };
+
     ~row_buf_t() {
         destroy(data_, data_ + used_);
         ::operator delete(data_);
@@ -47,12 +50,7 @@ template<typename T> struct row_t: private row_buf_t<T> {
     using row_buf_t<T>::size_;
     using row_buf_t<T>::data_;
 
-    explicit row_t(size_t n = 0): row_buf_t<T>(n) {
-        while(used_ < size_) {
-            construct(data_, 0);
-            used_++;
-        }
-    }
+    explicit row_t(size_t n = 0): row_buf_t<T>(n) {}
 
     template<typename It> row_t(It begin, It end): row_buf_t<T>(std::distance(begin, end)) {
         while(begin != end) {
@@ -104,14 +102,22 @@ protected:
     size_t size_, used_ = 0;
     row_t<T>* row_ = nullptr;
 protected:
-    matr_buf_t(size_t n = 0):row_(n == 0 ? nullptr : static_cast<row_t<T>*>(::operator new(sizeof(row_t<T>)*n))), size_(n) 
+    matr_buf_t(const matr_buf_t&) = delete;
+    matr_buf_t& operator=(const matr_buf_t&) = delete;
+
+    matr_buf_t(size_t n = 0):row_(n == 0 ? nullptr : static_cast<row_t<T>*>(::operator new(sizeof(row_t<T>)*n))), size_(n) {}
+    matr_buf_t(matr_buf_t&& rhs) noexcept : size_(rhs.size_), used_(rhs.used_), row_(rhs.row_) 
     {
-        while(used_ < size_) {
-            auto curr = row_+used_++;
-            // std::cout << curr << std::endl;
-            construct(curr, row_t<T>(size_));
-        }
+        rhs.size_ = 0;
+        rhs.used_ = 0;
+        rhs.row_ = nullptr;
     }
+    matr_buf_t& operator=(matr_buf_t&& rhs) noexcept 
+    {
+        std::swap(size_, rhs.size_);
+        std::swap(used_, rhs.used_);
+        std::swap(row_, rhs.row_);
+    }   
     ~matr_buf_t() 
     {
         destroy(row_, row_+used_);
@@ -144,12 +150,32 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
             throw std::out_of_range("Out of range");
         return row_[n];
     }
+    bool operator==(const matr_t& rhs) const noexcept {
+        auto result = true;
+        for(auto i = 0; i < size_; ++i) {
+            for(auto j = 0; j < size_; ++j) {
+                if(row_[i][j] != rhs[i][j]) {
+                    result = false;
+                    break;
+                }
+            }
+        }
+        return result;
+    }
     friend std::ostream& operator<<(std::ostream& os, const matr_t<T>& m) {
         for(size_t i = 0; i < m.used_; ++i) {
             os << m[i] << '\n';
         }
         return os;
     } 
+
+    double trace() const {
+        double trace = 1;
+        for(auto i = 0; i < size_; ++i) {
+            trace *= (*this)[i][i];
+        }
+        return trace;
+    }
 };
 
 } 
