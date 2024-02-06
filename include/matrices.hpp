@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <cassert>
+#include <cmath>
 namespace matrices {
 
 template<typename T> void construct(T* ptr, T& rhs) { new (ptr) T(rhs);}
@@ -69,7 +70,8 @@ template<typename T> struct row_t: private row_buf_t<T> {
 
     row_t(const row_t& rhs): row_buf_t<T>(rhs.used_){
         while(used_ < rhs.used_) {
-            construct(data_, rhs.data_[used_++]);
+            construct(data_+used_, rhs.data_[used_]);
+            used_++;
         }
     }
     row_t& operator=(const row_t& rhs) {
@@ -124,8 +126,11 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
 
     explicit matr_t(size_t n = 0): matr_buf_t<T>(n) {}
 
-    template<typename It> matr_t(It begin, It end) {
-
+    template<typename It> matr_t(It begin, It end): matr_buf_t<T>(std::sqrt(std::distance(begin, end))) {
+        while(begin != end) {
+            construct(row_+used_++, row_t<T>(begin, begin+size_));
+            begin+=size_;
+        }
     }
     row_t<T>& operator[](size_t n)
     {
