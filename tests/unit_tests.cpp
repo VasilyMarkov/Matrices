@@ -6,7 +6,15 @@
 using namespace testing;
 using namespace matrices;
 
-TEST(Unit, input) {
+TEST(Unit, equalOperator) {
+    // auto size = 2;
+    // std::vector<double> elements = {1, 2, 3, 4};
+    // Matrix mat{std::move(elements), size};
+    // std::cout << mat << std::endl;
+    // EXPECT_EQ(i, 5);
+}
+
+TEST(Unit, ctorFromContainer) {
     // auto size = 2;
     // std::vector<double> elements = {1, 2, 3, 4};
     // Matrix mat{std::move(elements), size};

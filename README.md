@@ -8,8 +8,6 @@ or
 
 ./bld 
 ## Run
-./triangles 
+./matrices 
 
-./run_tests full \
 ./run_tests unit \
-./run_tests point 

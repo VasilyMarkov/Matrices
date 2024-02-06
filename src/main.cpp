@@ -15,9 +15,9 @@ void print(const std::vector<T>& vec) {
 }
 
 int main() {
-    std::vector<int> data = {1,2,3,4,5};
-    row_t<int> r(std::begin(data), std::end(data));
-    std::cout << r << std::endl;
+    std::vector<int> vec = {1,2,3,4,5,6,7,8,9};
+    matr_t<int> m{std::begin(vec), std::end(vec)};
+    std::cout << m;
 #ifndef TEST
     size_t N{0};
     std::cin >> N;
