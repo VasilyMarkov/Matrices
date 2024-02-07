@@ -85,6 +85,39 @@ template<typename T> struct row_t: private row_buf_t<T> {
         return data_[n];
     }
 
+    bool operator==(const row_t& rhs) const noexcept {
+        auto result = true;
+        for(auto i = 0; i < size_; ++i) {
+            if(!equal(data_[i], rhs[i])) {
+                result = false;
+                break;
+            }
+        }
+        return result;
+    }
+
+    row_t& operator-=(const row_t& rhs) noexcept {
+        for(auto i = 0; i < size_; ++i) {
+                data_[i] -= rhs[i];
+        }  
+        return *this;
+    }
+
+    row_t& operator/=(double divisor) noexcept {
+        for(auto i = 0; i < size_; ++i) {
+                data_[i] /= divisor;
+        }  
+        return *this;
+    }
+
+    friend row_t operator-(const row_t& rhs, const row_t& lhs) noexcept {
+        auto tmp = rhs;
+        for(auto i = 0; i < size_; ++i) {
+                tmp[i] -= lhs[i];
+        }  
+        return tmp;
+    }
+
     friend void swap(row_t& rhs, row_t& lhs) noexcept {
         auto tmp = std::move(rhs);
         rhs = std::move(lhs);

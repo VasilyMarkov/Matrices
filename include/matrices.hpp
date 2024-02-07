@@ -102,28 +102,50 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     double trace() const noexcept {
         double trace = 1;
         for(auto i = 0; i < size_; ++i) {
-            trace *= (*this)[i][i];
+            trace *= row_[i][i];
         }
         return trace;
     }
 
-    void gauss() {
-        double ratio = 0;
-        // for(auto i = 0; i <= size_; i++)
+    void gauss() noexcept {
+        // double ratio = 0;
+        // for(auto i = 0; i < size_; ++i)
         // {
-            double max = 0;
-            size_t max_ind = 0;
-            for(auto j = 0; j <= size_; j++) {
-                if(row_[0][j] > max) {
-                    max = row_[j][0];
-                    max_ind = j;
-                }
-            }
-            swap(row_[0], row_[max_ind]);  
+        //     double max = 0;
+        //     size_t max_ind = 0;
+        //     for(auto j = i; j < size_; ++j) {
+        //         if(row_[j][i] > max) {
+        //             max = row_[j][i];
+        //             max_ind = j;
+        //         }
+        //     }
+        //     swap(row_[i], row_[max_ind]);  
 
-            (*this) /= max;
+        //     for(auto j = i; j < size_; ++j) {
+        //         row_[j] /= row_[j][i];
+        //     }
+        //     for(auto j = i+1; j < size_; ++j) {
+        //         row_[j] -= row_[i];
+        //     }
 
         // }
+        double temp = 0;
+        for(auto j = 0; j < size_; ++j) {
+            for(auto i = 0; i < size_; ++i) {
+                if(i != j)
+                {
+                    temp = row_[i][j]/row_[j][j];
+
+                    for(auto k = 0; k < size_; ++k) {
+                        row_[i][k] -= row_[j][k]*temp;
+                    }
+                }
+            }
+        }
+    }
+    double det() noexcept {
+        gauss();
+        return trace();
     }
 };
 

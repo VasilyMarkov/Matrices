@@ -2,13 +2,13 @@
 
 double eps = 1e-5;
 
-inline bool equal(double a, double b) {
+inline bool equal(const double a, const double b) {
     return std::abs(a-b) < eps;
 }
-inline bool lessEqual(double a, double b) {
+inline bool lessEqual(const double a, const double b) {
     return std::abs(a-b) <= eps;
 }
-inline bool greaterEqual(double a, double b) {
+inline bool greaterEqual(const double a, const double b) {
     return std::abs(a-b) >= eps;
 }
 

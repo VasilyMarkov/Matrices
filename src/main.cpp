@@ -15,9 +15,11 @@ void print(const std::vector<T>& vec) {
 }
 
 int main() {
-    std::vector<int> vec = {1,2,3,4,5,6,7,8,9};
-    matr_t<int> m{std::begin(vec), std::end(vec)};
-    std::cout << m;
+    // std::vector<int> vec = {1,2,3,4,5,6,7,8,9};
+    // matr_t<int> m{std::begin(vec), std::end(vec)};
+    // std::cout << m;
+    // swap(m[0], m[1]);
+    // std::cout << m;
 #ifndef TEST
     size_t N{0};
     std::cin >> N;

@@ -7,7 +7,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 message("Tests building...")
 
-add_executable(unit_tests unit_tests.cpp)
+add_executable(unit_tests matrix_tests.cpp)
 
 target_include_directories(unit_tests
   PRIVATE
