@@ -1,5 +1,17 @@
 #pragma once
 
+double eps = 1e-5;
+
+inline bool equal(double a, double b) {
+    return std::abs(a-b) < eps;
+}
+inline bool lessEqual(double a, double b) {
+    return std::abs(a-b) <= eps;
+}
+inline bool greaterEqual(double a, double b) {
+    return std::abs(a-b) >= eps;
+}
+
 template<typename T> void construct(T* ptr, T& rhs) { new (ptr) T(rhs);}
 template<typename T> void construct(T* ptr, T&& rhs) { new (ptr) T(std::move(rhs));}
 

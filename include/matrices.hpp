@@ -66,7 +66,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         auto result = true;
         for(auto i = 0; i < size_; ++i) {
             for(auto j = 0; j < size_; ++j) {
-                if(row_[i][j] != rhs[i][j]) {
+                if(!equal(row_[i][j], rhs[i][j])) {
                     result = false;
                     break;
                 }
