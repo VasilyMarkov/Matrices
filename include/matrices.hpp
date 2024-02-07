@@ -74,6 +74,24 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         }
         return result;
     }
+
+    matr_t& operator-=(double sub) {
+        for(auto i = 0; i < size_; ++i) {
+            for(auto j = 0; j < size_; ++j) {
+                row_[i][j] -= sub;
+            }
+        }  
+        return *this;
+    }
+
+    matr_t& operator/=(double divisor) {
+        for(auto i = 0; i < size_; ++i) {
+            for(auto j = 0; j < size_; ++j) {
+                row_[i][j] /= divisor;
+            }
+        }  
+        return *this;
+    }
     friend std::ostream& operator<<(std::ostream& os, const matr_t<T>& m) {
         for(size_t i = 0; i < m.used_; ++i) {
             os << m[i] << '\n';
@@ -87,6 +105,25 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
             trace *= (*this)[i][i];
         }
         return trace;
+    }
+
+    void gauss() {
+        double ratio = 0;
+        // for(auto i = 0; i <= size_; i++)
+        // {
+            double max = 0;
+            size_t max_ind = 0;
+            for(auto j = 0; j <= size_; j++) {
+                if(row_[0][j] > max) {
+                    max = row_[j][0];
+                    max_ind = j;
+                }
+            }
+            swap(row_[0], row_[max_ind]);  
+
+            (*this) /= max;
+
+        // }
     }
 };
 
