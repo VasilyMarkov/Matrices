@@ -17,16 +17,16 @@ protected:
 
     row_buf_t(size_t n = 0):data_(n == 0 ? nullptr : static_cast<T*>(::operator new(sizeof(T)*n))), size_(n) {}
 
-    row_buf_t(row_buf_t&& buf) noexcept: size_(buf.size_()), used_(buf.used_), data_(buf.data_) {
+    row_buf_t(row_buf_t&& buf) noexcept: size_(buf.size_), used_(buf.used_), data_(buf.data_) {
         buf.size_ = 0;
         buf.used_ = 0;
         buf.data_ = nullptr;
     };
 
     row_buf_t& operator=(row_buf_t&& buf) noexcept {
-        std::swap(data_, buf.data_()); 
-        std::swap(size_, buf.size_());
-        std::swap(used_, buf.used_());
+        std::swap(data_, buf.data_); 
+        std::swap(size_, buf.size_);
+        std::swap(used_, buf.used_);
         return *this;
     };
 
@@ -63,6 +63,10 @@ template<typename T> struct row_t: private row_buf_t<T> {
             used_++;
         }
     }
+
+    row_t(row_t&& rhs) = default;
+    row_t& operator=(row_t&& rhs) = default;
+
     row_t& operator=(const row_t& rhs) {
         row_t tmp(rhs);
         std::swap(*this, tmp);
@@ -80,6 +84,13 @@ template<typename T> struct row_t: private row_buf_t<T> {
             throw std::out_of_range("Out of range");
         return data_[n];
     }
+
+    friend void swap(row_t& rhs, row_t& lhs) noexcept {
+        auto tmp = std::move(rhs);
+        rhs = std::move(lhs);
+        lhs = std::move(tmp);
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const row_t& r) {
         for(size_t i = 0; i < r.used_; ++i) {
             os << r[i] << ' ';

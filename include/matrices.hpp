@@ -81,7 +81,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         return os;
     } 
 
-    double trace() const {
+    double trace() const noexcept {
         double trace = 1;
         for(auto i = 0; i < size_; ++i) {
             trace *= (*this)[i][i];
