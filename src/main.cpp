@@ -2,9 +2,10 @@
 #include <vector>
 #include <optional>
 #include <exception>
-#include <matrices.hpp>
 #include <iterator>
-#define TEST
+#include <matrices.hpp>
+#include <chrono>
+// #define TEST
 
 using namespace matrices;
 
@@ -15,20 +16,31 @@ void print(const std::vector<T>& vec) {
 }
 
 int main() {
-    // std::vector<int> vec = {1,2,3,4,5,6,7,8,9};
-    // matr_t<int> m{std::begin(vec), std::end(vec)};
-    // std::cout << m;
-    // swap(m[0], m[1]);
-    // std::cout << m;
+
 #ifndef TEST
+    double tmp{0};
     size_t N{0};
-    std::cin >> N;
-    std::vector<double> data(N);
-    for(auto i = 0; i < N; ++i) {
+    std::cin >> tmp;
+    N = static_cast<size_t>(tmp);
+    std::vector<double> data(N*N);
+    for(auto i = 0; i < N*N; ++i) {
         auto tmp{0.0};
         std::cin >> tmp;
         data[i] = tmp;
     }  
+    try {
+        matr_t<double> matrix(N, std::begin(data), std::end(data));
+        std::cout << matrix;
+        auto begin = std::chrono::high_resolution_clock::now();
+        auto det =  matrix.det();
+        auto end = std::chrono::high_resolution_clock::now();
+        auto delta = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+        std::cout << det << std::endl;
+        std::cout << delta << " ms";
+    }
+    catch(std::exception& e)  {
+        std::cout << e.what() << std::endl;
+    }
 #else
     // std::vector<int> input = {1,2,3,4};
     // row_t<int> r(std::begin(input), std::end(input));
