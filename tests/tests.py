@@ -103,5 +103,5 @@ def end_to_end(app, n):
 
     print("Tests finished.")
 if __name__ == '__main__':
-    app = "/home/vasily/usr/phystech/C++/labs/matrices/matrices"
+    app = "./matrices"
     end_to_end(app, 100)
