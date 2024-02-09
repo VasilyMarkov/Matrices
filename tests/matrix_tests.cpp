@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "matrices.hpp"
 #include <iostream>
+#include "matrices.hpp"
 
 using namespace testing;
 using namespace matrices;
@@ -76,14 +76,6 @@ TEST(Matrix, divisionAssignmentOperator) {
     EXPECT_TRUE(m1 == m_ref1);
 }
 
-TEST(Matrix, gauss) {
-    std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
-    matr_t<double> m{3, std::begin(vec), std::end(vec)};
-    std::cout << m << std::endl;
-    // m.gaussJordan();
-    std::cout << m;
-}
-
 TEST(Matrix, determinant) {
     std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};
@@ -93,9 +85,12 @@ TEST(Matrix, determinant) {
 TEST(Matrix, inValidMatrix) {
     std::vector<double> vec = {0,4,1,5,2,1,2,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};
-    // std::cout << m << std::endl;
-    m.det();
-    // std::cout << m;
+    EXPECT_THROW(m.det(), std::runtime_error);
+}
+
+TEST(Matrix, nonSquareMatrix) {
+    std::vector<double> vec = {2,4,1,5,2,1,2,3,4,1,3,4};
+    EXPECT_THROW(matr_t<double> m(3, std::begin(vec), std::end(vec)), std::runtime_error);
 }
 
 int main(int argc, char **argv) {
