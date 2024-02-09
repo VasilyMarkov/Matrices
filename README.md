@@ -1,13 +1,16 @@
-# Matrices
-## Build
-cmake -S . -B release -DCMAKE_BUILD_TYPE=Release 
+# Matrices determinant compute
 
-cmake --build release
+## Install
+    $git clone git@github.com:VasilyMarkov/Matrices.git
+## Manual Build
+    $cmake -S . -B release -DCMAKE_BUILD_TYPE=Release && cmake --build release
+## Auto Build
+    $./bld 
+## Auto Build with tests
+    $./bld TEST
 
-or 
-
-./bld 
 ## Run
-./matrices 
-
-./run_tests unit \
+    $./matrices < data_file
+## Run tests
+    $./run_tests unit 
+    Tests results in tests/result.log

@@ -6,4 +6,4 @@ build
 googletest
 test
 build
-
+tests/results.log
