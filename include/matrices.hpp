@@ -63,13 +63,13 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     row_t<T>& operator[](size_t n)
     {
         if(n > used_)
-            throw std::out_of_range("Out of range");
+            throw std::out_of_range("out of range");
         return row_[n];
     }
     const row_t<T>& operator[](size_t n) const
     {
         if(n > used_)
-            throw std::out_of_range("Out of range");
+            throw std::out_of_range("out of range");
         return row_[n];
     }
     bool operator==(const matr_t& rhs) const noexcept {
@@ -129,7 +129,7 @@ private:
             for(auto i = 0; i < size_; ++i) {
                 if(i != j)
                 {
-                    if(std::fabs(row_[j][j]) < eps) throw std::runtime_error("Degenerate matrix");
+                    if(std::fabs(row_[j][j]) < eps) throw std::runtime_error("degenerate matrix");
                     temp = row_[i][j]/row_[j][j];
 
                     for(auto k = 0; k < size_; ++k) {
