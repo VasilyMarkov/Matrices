@@ -138,31 +138,6 @@ private:
                 }
             }
         }
-        // double ratio = 0;
-        // double det = 1;
-        // for(auto i = 0; i < size_; ++i)
-        // {
-        //     double max = 0;
-        //     size_t max_ind = 0;
-        //     for(auto j = i; j < size_; ++j) {
-        //         if(row_[j][i] > max) {
-        //             max = row_[j][i];
-        //             max_ind = j;
-        //         }
-        //     }
-        //     swap(row_[i], row_[max_ind]);  
-
-        //     for(auto j = i; j < size_; ++j) {
-        //         det *= row_[j][i];
-        //         row_[j] /= row_[j][i];
-
-        //     }
-        //     for(auto j = i+1; j < size_; ++j) {
-        //         row_[j] -= row_[i];
-        //     }
-
-        // }
-        // return det;
     }
 };
 
