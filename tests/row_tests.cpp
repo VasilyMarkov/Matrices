@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "row.hpp"
+#include "matrices.hpp"
 #include <iostream>
 
 using namespace testing;
@@ -20,9 +20,11 @@ TEST(Row, equalOperator) {
 
 TEST(Row, subtractionAssignmentOperator) {
     std::vector<double> vec = {2,4,6,8};
+    std::vector<double> sub = {0,2,4,6};
     row_t<double> r{std::begin(vec), std::end(vec)};
-    r -= 2;
-    std::vector<double> ref = {0,2,4,6};
+    row_t<double> r_sub{std::begin(sub), std::end(sub)};
+    r -=r_sub;
+    std::vector<double> ref = {2,2,2,2};
     row_t<double> r_ref{std::begin(ref), std::end(ref)};
     EXPECT_TRUE(r == r_ref);
 }

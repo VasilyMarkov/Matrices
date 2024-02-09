@@ -44,11 +44,21 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
 
     explicit matr_t(size_t n = 0): matr_buf_t<T>(n) {}
 
-    template<typename It> matr_t(It begin, It end): matr_buf_t<T>(std::sqrt(std::distance(begin, end))) {
-        while(begin != end) {
-            construct(row_+used_++, row_t<T>(begin, begin+size_));
-            begin+=size_;
+    template<typename It> matr_t(size_t size, It begin, It end): matr_buf_t<T>(size) {
+
+        if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("Invalid Matrix: non square matrix");
+        try {
+            while(begin != end) {
+                construct(row_+used_++, row_t<T>(begin, begin+size_));
+                begin+=size_;
+            }
         }
+        catch(std::bad_alloc& e) {
+            destroy(row_, row_+used_);
+            used_ = 0;
+            throw std::bad_alloc();
+        }
+
     }
     row_t<T>& operator[](size_t n)
     {
@@ -99,16 +109,37 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         return os;
     } 
 
-    double trace() const noexcept {
-        double trace = 1;
-        for(auto i = 0; i < size_; ++i) {
-            trace *= row_[i][i];
-        }
-        return trace;
+    double det() {
+        gaussJordan();
+        return diagonalProduct();
     }
 
-    void gauss() noexcept {
+private:
+    double diagonalProduct() const noexcept {
+        double result = 1;
+        for(auto i = 0; i < size_; ++i) {
+            result *= row_[i][i];
+        }
+        return result;
+    }
+
+    void gaussJordan() {
+        double temp = 0;
+        for(auto j = 0; j < size_; ++j) {
+            for(auto i = 0; i < size_; ++i) {
+                if(i != j)
+                {
+                    if(std::fabs(row_[j][j]) < eps) throw std::runtime_error("Degenerate matrix");
+                    temp = row_[i][j]/row_[j][j];
+
+                    for(auto k = 0; k < size_; ++k) {
+                        row_[i][k] -= row_[j][k]*temp;
+                    }
+                }
+            }
+        }
         // double ratio = 0;
+        // double det = 1;
         // for(auto i = 0; i < size_; ++i)
         // {
         //     double max = 0;
@@ -122,30 +153,16 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         //     swap(row_[i], row_[max_ind]);  
 
         //     for(auto j = i; j < size_; ++j) {
+        //         det *= row_[j][i];
         //         row_[j] /= row_[j][i];
+
         //     }
         //     for(auto j = i+1; j < size_; ++j) {
         //         row_[j] -= row_[i];
         //     }
 
         // }
-        double temp = 0;
-        for(auto j = 0; j < size_; ++j) {
-            for(auto i = 0; i < size_; ++i) {
-                if(i != j)
-                {
-                    temp = row_[i][j]/row_[j][j];
-
-                    for(auto k = 0; k < size_; ++k) {
-                        row_[i][k] -= row_[j][k]*temp;
-                    }
-                }
-            }
-        }
-    }
-    double det() noexcept {
-        gauss();
-        return trace();
+        // return det;
     }
 };
 
