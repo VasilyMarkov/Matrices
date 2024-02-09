@@ -11,7 +11,8 @@
     $./bld TEST
 
 ## Run
+### App
     $./matrices < data_file
-## Run tests
+### Tests
     $./run_tests unit 
 Tests results in tests/result.log
