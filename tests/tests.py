@@ -3,6 +3,17 @@ import time
 from subprocess import Popen, PIPE, STDOUT
 import logging
 
+class TERMINAL_COLORS:
+        PURPLE    = '\033[95m'
+        OKBLUE    = '\033[94m'
+        OKCYAN    = '\033[96m'
+        OKGREEN   = '\033[92m'
+        WARNING   = '\033[93m'
+        ERROR     = '\033[91m'
+        DEFAULT   = '\033[0m'
+        BOLD      = '\033[1m'
+        UNDERLINE = '\033[4m'
+
 def generateMatrix(size):
     pivot = 1.1
     det = pivot**size
@@ -64,13 +75,12 @@ def runTest(app, generator, size):
 
 
 def parseAppOut(out):
-    errors = ["bad_alloc", "out_of_range", "non square matrix", "degenerate matrix"]
+    errors = ["bad_alloc", "out_of_range", "non square matrix", "degenerate matrix", "Test"]
+    err_msg = False
     for err in errors:
-        if out.find(err) == -1:
-            return out
-        else:
-            print(out)
-
+        if out.find(err) != -1:
+            raise Exception(out)
+    return out
 
 def runApp(app, data):
     pipe = Popen([app], stdout=PIPE, stdin=PIPE)
@@ -82,26 +92,33 @@ COND_TRESHOLD = 1e10
 
 def end_to_end(app, n):
     print("Running tests...")
-
     logging.basicConfig(filename="tests/results.log", format='%(asctime)s: %(levelname)s %(message)s', datefmt='%H:%M:%S', level=logging.INFO)
-    for i in range(2,n+1):
-        gen_name, err, det, app_det, cond = runTest(app, generateMatrix, i)
-        if err and cond >  COND_TRESHOLD:
-            logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number. Error: {abs(det-app_det)}')
-        elif err and not cond:
-            logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
-        else:
-            logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
+    try:
 
-        gen_name, err, det, app_det, cond = runTest(app, generateIllConditionMatrix, i)
-        if err and cond >  COND_TRESHOLD:
-            logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number. Error: {abs(det-app_det)}')
-        elif err and not cond:
-            logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
-        else:
-            logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
+        for i in range(2,n+1):
+            gen_name, err, det, app_det, cond = runTest(app, generateMatrix, i)
+            if err and cond >  COND_TRESHOLD:
+                logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number. Error: {abs(det-app_det)}')
+            elif err and not cond:
+                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
+            else:
+                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
 
+            gen_name, err, det, app_det, cond = runTest(app, generateIllConditionMatrix, i)
+            if err and cond >  COND_TRESHOLD:
+                logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number. Error: {abs(det-app_det)}')
+            elif err and not cond:
+                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
+            else:
+                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
+
+        
+    except Exception as e:
+        logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Error: {e}')
+    
     print("Tests finished.")
+
 if __name__ == '__main__':
     app = "./matrices"
-    end_to_end(app, 100)
+    n = 100
+    end_to_end(app, n)
