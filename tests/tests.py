@@ -3,17 +3,6 @@ import time
 from subprocess import Popen, PIPE, STDOUT
 import logging
 
-class TERMINAL_COLORS:
-        PURPLE    = '\033[95m'
-        OKBLUE    = '\033[94m'
-        OKCYAN    = '\033[96m'
-        OKGREEN   = '\033[92m'
-        WARNING   = '\033[93m'
-        ERROR     = '\033[91m'
-        DEFAULT   = '\033[0m'
-        BOLD      = '\033[1m'
-        UNDERLINE = '\033[4m'
-
 def generateMatrix(size):
     pivot = 1.1
     det = pivot**size
@@ -89,6 +78,7 @@ def runApp(app, data):
 
 
 COND_TRESHOLD = 1e10
+
 
 def end_to_end(app, n):
     print("Running tests...")
