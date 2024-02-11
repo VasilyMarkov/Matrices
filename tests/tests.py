@@ -64,8 +64,7 @@ def runTest(app, generator, size):
 
 
 def parseAppOut(out):
-    errors = ["bad_alloc", "out_of_range", "non square matrix", "degenerate matrix", "Test"]
-    err_msg = False
+    errors = ["bad_alloc", "out_of_range", "non square matrix", "degenerate matrix", "Division by zero", "Invalid input data"]
     for err in errors:
         if out.find(err) != -1:
             raise Exception(out)
@@ -101,12 +100,12 @@ def end_to_end(app, n):
                 logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
             else:
                 logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
-
+        print("Tests finished.")
         
     except Exception as e:
         logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Error: {e}')
+        print("Tests failed.")
     
-    print("Tests finished.")
 
 if __name__ == '__main__':
     app = "./matrices"

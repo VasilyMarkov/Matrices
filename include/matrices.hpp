@@ -18,20 +18,17 @@ protected:
     matr_buf_t& operator=(const matr_buf_t&) = delete;
 
     matr_buf_t(size_t n = 0):row_(n == 0 ? nullptr : static_cast<row_t<T>*>(::operator new(sizeof(row_t<T>)*n))), size_(n) {}
-    matr_buf_t(matr_buf_t&& rhs) noexcept : size_(rhs.size_), used_(rhs.used_), row_(rhs.row_) 
-    {
+    matr_buf_t(matr_buf_t&& rhs) noexcept : size_(rhs.size_), used_(rhs.used_), row_(rhs.row_) {
         rhs.size_ = 0;
         rhs.used_ = 0;
         rhs.row_ = nullptr;
     }
-    matr_buf_t& operator=(matr_buf_t&& rhs) noexcept 
-    {
+    matr_buf_t& operator=(matr_buf_t&& rhs) noexcept {
         std::swap(size_, rhs.size_);
         std::swap(used_, rhs.used_);
         std::swap(row_, rhs.row_);
     }   
-    ~matr_buf_t() 
-    {
+    ~matr_buf_t() {
         destroy(row_, row_+used_);
         ::operator delete(row_);
     }
@@ -45,8 +42,8 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     explicit matr_t(size_t n = 0): matr_buf_t<T>(n) {}
 
     template<typename It> matr_t(size_t size, It begin, It end): matr_buf_t<T>(size) {
-
         if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("Invalid Matrix: non square matrix");
+        
         try {
             while(begin != end) {
                 construct(row_+used_++, row_t<T>(begin, begin+size_));
@@ -60,18 +57,19 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         }
 
     }
-    row_t<T>& operator[](size_t n)
-    {
+
+    row_t<T>& operator[](size_t n) {
         if(n > used_)
             throw std::out_of_range("out of range");
         return row_[n];
     }
-    const row_t<T>& operator[](size_t n) const
-    {
+
+    const row_t<T>& operator[](size_t n) const {
         if(n > used_)
             throw std::out_of_range("out of range");
         return row_[n];
     }
+
     bool operator==(const matr_t& rhs) const noexcept {
         auto result = true;
         for(auto i = 0; i < size_; ++i) {
@@ -102,6 +100,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         }  
         return *this;
     }
+    
     friend std::ostream& operator<<(std::ostream& os, const matr_t<T>& m) {
         for(size_t i = 0; i < m.used_; ++i) {
             os << m[i] << '\n';

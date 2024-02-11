@@ -14,7 +14,7 @@ void print(const std::vector<T>& vec) {
     std::cout << std::endl;
 }
 
-int main() {
+std::pair<size_t, std::vector<double>> readInputData() {
     double tmp{0};
     size_t N{0};
     std::cin >> tmp;
@@ -26,8 +26,14 @@ int main() {
         std::cin >> tmp;
         data[i] = tmp;
     }  
+    if(std::cin.fail()) throw std::runtime_error("Invalid input data");
+    return {N, data};
+}
+
+int main() {
     try {
-        matr_t<double> matrix(N, std::begin(data), std::end(data));
+        auto data = readInputData();
+        matr_t<double> matrix(data.first, std::begin(data.second), std::end(data.second));
         auto det =  matrix.det();
         std::cout << det << std::endl;
     }
