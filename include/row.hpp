@@ -45,15 +45,7 @@ template<typename T> struct row_t: private row_buf_t<T> {
 
     template<typename It> row_t(It begin, It end): row_buf_t<T>(std::distance(begin, end)) {
         while(begin != end) {
-            try {
-                construct(data_ + used_++, *begin++);
-            }
-            catch(std::bad_alloc& e) {
-                while(used_ != 0) {
-                    destroy(data_+used_--);
-                }
-                throw std::bad_alloc();
-            }
+            construct(data_ + used_++, *begin++);
         }
     }
 
@@ -72,12 +64,14 @@ template<typename T> struct row_t: private row_buf_t<T> {
         std::swap(*this, tmp);
         return *this;
     }
+
     T& operator[](size_t n)
     {
         if(n > used_)
             throw std::out_of_range("Out of range");
         return data_[n];
     }
+
     const T& operator[](size_t n) const
     {
         if(n > used_)
@@ -103,7 +97,8 @@ template<typename T> struct row_t: private row_buf_t<T> {
         return *this;
     }
 
-    row_t& operator/=(double divisor) noexcept {
+    row_t& operator/=(double divisor)  {
+        if (std::fabs(divisor) < eps)throw std::runtime_error("Division by zero");
         for(auto i = 0; i < size_; ++i) {
                 data_[i] /= divisor;
         }  
@@ -128,8 +123,8 @@ template<typename T> struct row_t: private row_buf_t<T> {
         for(size_t i = 0; i < r.used_; ++i) {
             os << r[i] << ' ';
         }
-    return os;
-}  
+        return os;
+    }  
 };
 
 }
