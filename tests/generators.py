@@ -54,7 +54,4 @@ def nonSquareMatrix(size):
         else:
             col -= 1
     matrix = np.random.normal(0, 2, (row, col))
-    return matrix
-
-
-print(nonSquareMatrix(5))
+    return "None Square Matrix", matrix, None, None

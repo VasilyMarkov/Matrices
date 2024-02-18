@@ -2,7 +2,7 @@ import numpy as np
 import time
 from subprocess import Popen, PIPE, STDOUT
 import logging
-import generators as gen
+import generators
 
 def serialize(matrix):
     out_matrix = np.ndarray.flatten(matrix)
@@ -30,7 +30,7 @@ def runTest(app, generator, size):
 
 
 def parseAppOut(out):
-    errors = ["bad_alloc", "out_of_range", "non square matrix", "degenerate matrix", "Division by zero", "Invalid input data"]
+    errors = ["bad_alloc", "out_of_range", "Invalid input data"]
     for err in errors:
         if out.find(err) != -1:
             raise Exception(out)
@@ -43,40 +43,50 @@ def runApp(app, data):
     return parseAppOut(out[0].decode())
 
 
-def end_to_end(app, n):
+def writeGenLog(gen_name, err, cond, i):
     COND_TRESHOLD = 1e10
-    print("Running tests...")
+    match gen_name:
+        case "Well Matrix":
+            if err and cond > COND_TRESHOLD:
+                logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number')
+            elif err and not cond:
+                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number')
+            else:
+                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
+        case "Ill Matrix":
+            if err and cond > COND_TRESHOLD:
+                logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number')
+            elif err and not cond:
+                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number')
+            else:
+                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
+        case "Degen Matrix":
+            if err:
+                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Test failed')
+            else:
+                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
+
+
+def exceptionLog(e, i):
+    if e.args[0] == "Invalid input data" and e.args[1] == "None Square Matrix":  
+        logging.info(f'Runing {e.args[1]} test. Matrix size: {i}. Test passed')
+    else:
+        logging.info(f'Runing {e.args[1]} test. Matrix size: {i}. Error: {e.args[0]}')
+
+
+def end_to_end(app, n): 
     logging.basicConfig(filename="tests/results.log", format='%(asctime)s: %(levelname)s %(message)s', datefmt='%H:%M:%S', level=logging.INFO)
-    try:
-
-        for i in range(2,n+1):
-            gen_name, err, det, app_det, cond = runTest(app, gen.wellMatrix, i)
-            if err and cond >  COND_TRESHOLD:
-                logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number. Error: {abs(det-app_det)}')
-            elif err and not cond:
-                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
-            else:
-                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
-
-            gen_name, err, det, app_det, cond = runTest(app, gen.illMatrix, i)
-            if err and cond >  COND_TRESHOLD:
-                logging.error(f'Runing {gen_name} test. Matrix size: {i}. Ill conditional number. Error: {abs(det-app_det)}')
-            elif err and not cond:
-                logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Well conditional number co. Det: {det}, app_det: {app_det}.')
-            else:
-                logging.info(f'Runing {gen_name} test. Matrix size: {i}. Test passed')
-        print("Tests finished.")
-        
-    except Exception as e:
-        # logging.critical(f'Runing {gen_name} test. Matrix size: {i}. Error: {e}')
-        print("Tests failed.")
     
-
-import string
-import random
-
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+    print("Running tests...")
+    for name, val in generators.__dict__.items():
+        if callable(val):
+            for i in range(2,n+1):     
+                try:
+                    gen_name, err, det, app_det, cond = runTest(app, val, i)
+                    writeGenLog(gen_name, err, cond, i)
+                except Exception as e:
+                    exceptionLog(e, i)
+    print("Tests finished.")
 
 
 if __name__ == '__main__':
