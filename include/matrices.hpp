@@ -42,7 +42,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     explicit matr_t(size_t n = 0): matr_buf_t<T>(n) {}
 
     template<typename It> matr_t(size_t size, It begin, It end): matr_buf_t<T>(size) {
-        if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("Invalid Matrix: non square matrix");
+        if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("non square matrix");
         
         try {
             while(begin != end) {
@@ -109,7 +109,12 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     } 
 
     double det() {
-        gaussJordan();
+        try {
+            gaussJordan();   
+        }
+        catch(std::runtime_error& e) {
+            return 0;
+        }
         return diagonalProduct();
     }
 

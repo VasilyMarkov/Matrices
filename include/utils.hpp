@@ -1,6 +1,6 @@
 #pragma once
 
-double eps = 1e-5;
+double eps = 1e-7;
 
 inline bool equal(const double a, const double b) {
     return std::abs(a-b) < eps;
