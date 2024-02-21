@@ -115,14 +115,13 @@ def end_to_end(app, n):
     data_path = "data/"
     runCornerCaseTests(app, data_path)
 
-    # for _, val in generators.__dict__.items():
-    #     if callable(val):
-    #         for i in range(2,n+1):     
-    #             try:
-    #                 genLog(runTest(app, val, i))
-    #             except Exception as e:
-    #                 ...
-    #                 # log(e.args[0],e.args[1], i)
+    for _, val in generators.__dict__.items():
+        if callable(val):
+            for i in range(2,n+1):     
+                try:
+                    genLog(runTest(app, val, i))
+                except Exception as e:
+                    ...
     print("Tests finished.")
 
 
