@@ -38,7 +38,7 @@ int main() {
         std::cout << det << std::endl;
     }
     catch(std::exception& e)  {
-        std::cout << e.what() << std::endl;
+        std::cout << e.what();
     }
 
     return 0;
