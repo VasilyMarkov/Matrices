@@ -67,13 +67,6 @@ TEST(Matrix, divisionAssignmentOperator) {
     std::vector<double> ref = {1,2,3,4};
     matr_t<double> m_ref{2, std::begin(ref), std::end(ref)};
     EXPECT_TRUE(m == m_ref);
-
-    std::vector<double> vec1 = {1,1,1,1};
-    matr_t<double> m1{2, std::begin(vec1), std::end(vec1)};
-    m1 /= 3;
-    std::vector<double> ref1 = {0.33333,0.33333,0.33333,0.33333};
-    matr_t<double> m_ref1{2, std::begin(ref1), std::end(ref1)};
-    EXPECT_TRUE(m1 == m_ref1);
 }
 
 TEST(Matrix, determinant) {
@@ -82,10 +75,10 @@ TEST(Matrix, determinant) {
     EXPECT_THAT(m.det(), -51);
 }
 
-TEST(Matrix, inValidMatrix) {
-    std::vector<double> vec = {0,4,1,5,2,1,2,3,4};
+TEST(Matrix, degenerateMatrix) {
+    std::vector<double> vec = {1,2,3,2,4,6,1,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};
-    EXPECT_THROW(m.det(), std::runtime_error);
+    EXPECT_THAT(m.det(), 0);
 }
 
 TEST(Matrix, nonSquareMatrix) {

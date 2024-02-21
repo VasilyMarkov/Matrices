@@ -7,3 +7,5 @@ googletest
 test
 build
 tests/results.log
+tests/__pycache__/
+tests/common.log
