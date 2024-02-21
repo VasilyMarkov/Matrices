@@ -6,6 +6,7 @@
 #include <cmath>
 #include <utils.hpp>
 #include <row.hpp>
+#include <optional>
 
 namespace matrices {
 
@@ -108,14 +109,10 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         return os;
     } 
 
-    double det() {
-        try {
-            gaussJordan();   
-        }
-        catch(std::runtime_error& e) {
-            return 0;
-        }
-        return diagonalProduct();
+    double det() { 
+        auto sign = gaussJordan();
+        if(sign == std::nullopt) return 0;  
+        return sign.value()*diagonalProduct();
     }
 
 private:
@@ -127,13 +124,29 @@ private:
         return result;
     }
 
-    void gaussJordan() {
+    std::optional<int> gaussJordan() {
         double temp = 0;
+        size_t permutations = 0;
         for(auto j = 0; j < size_; ++j) {
+            double max = 0;
+            size_t max_ind = 0;
+            for(auto i = j; i < size_; ++i) {
+                if(std::fabs(row_[i][j]) > max) {
+                    max = std::fabs(row_[i][j]);
+                    max_ind = i;
+                }
+            }
+
+            swap(row_[j], row_[max_ind]);
+
+            if (j != max_ind) permutations++;
+
+            if (std::fabs(row_[j][j]) < eps ) 
+                return std::nullopt;
+
             for(auto i = 0; i < size_; ++i) {
                 if(i != j)
                 {
-                    if(std::fabs(row_[j][j]) < eps) throw std::runtime_error("degenerate matrix");
                     temp = row_[i][j]/row_[j][j];
 
                     for(auto k = 0; k < size_; ++k) {
@@ -141,7 +154,10 @@ private:
                     }
                 }
             }
+            
         }
+        if(permutations % 2 == 0 && permutations != 0) return 1;
+        return -1;
     }
 };
 
