@@ -60,15 +60,6 @@ TEST(Matrix, subtractionAssignmentOperator) {
     EXPECT_TRUE(m == m_ref);
 }
 
-TEST(Matrix, divisionAssignmentOperator) {
-    std::vector<double> vec = {2,4,6,8};
-    matr_t<double> m{2, std::begin(vec), std::end(vec)};
-    m /= 2;
-    std::vector<double> ref = {1,2,3,4};
-    matr_t<double> m_ref{2, std::begin(ref), std::end(ref)};
-    EXPECT_TRUE(m == m_ref);
-}
-
 TEST(Matrix, determinant) {
     std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};

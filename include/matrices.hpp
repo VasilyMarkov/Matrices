@@ -43,20 +43,11 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     explicit matr_t(size_t n = 0): matr_buf_t<T>(n) {}
 
     template<typename It> matr_t(size_t size, It begin, It end): matr_buf_t<T>(size) {
-        if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("non square matrix");
-        
-        try {
-            while(begin != end) {
-                construct(row_+used_++, row_t<T>(begin, begin+size_));
-                begin+=size_;
-            }
+        if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("non square matrix");     
+        while(begin != end) {
+            construct(row_+used_++, row_t<T>(begin, begin+size_));
+            begin+=size_;
         }
-        catch(std::bad_alloc& e) {
-            destroy(row_, row_+used_);
-            used_ = 0;
-            throw std::bad_alloc();
-        }
-
     }
 
     row_t<T>& operator[](size_t n) {
@@ -88,15 +79,6 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         for(auto i = 0; i < size_; ++i) {
             for(auto j = 0; j < size_; ++j) {
                 row_[i][j] -= sub;
-            }
-        }  
-        return *this;
-    }
-
-    matr_t& operator/=(double divisor) {
-        for(auto i = 0; i < size_; ++i) {
-            for(auto j = 0; j < size_; ++j) {
-                row_[i][j] /= divisor;
             }
         }  
         return *this;
