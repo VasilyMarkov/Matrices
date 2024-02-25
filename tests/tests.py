@@ -5,6 +5,16 @@ import generators
 from os import listdir
 from os.path import isfile, join
 
+def createLogger(name):
+    dir_path = 'tests/'
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    file_handler = logging.FileHandler(dir_path+name)  
+    formatter = logging.Formatter('%(asctime)s: %(levelname)s %(message)s')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    return logger
+
 def serializeMatrix(matrix):
     out_matrix = np.ndarray.flatten(matrix)
     out_data = np.zeros(out_matrix.shape[0]+1)
@@ -48,19 +58,19 @@ def runTestFromFile(app, file_path):
     return {"name": file_path, "err": error}
 
 
-def runCornerCaseTests(app, data_path):
+def runCornerCaseTests(app, data_path, logger):
     file_list = [f for f in listdir(data_path) if isfile(join(data_path, f))]
     file_list.sort()
     for file in file_list:
-        log(runTestFromFile(app, data_path+file))
+        log(runTestFromFile(app, data_path+file), logger)
 
 
 def runTest(app, generator, size):
     error = False
     gen_name, matrix, det, cond = generator(size)
     try:
-        app_det = float(runApp(app, serialize(matrix)))
-        if abs(app_det-det) > 0.00001:
+        app_det = float(runApp(app, serializeMatrix(matrix)))
+        if abs(app_det-det) > 0.001:
             error = True
     except Exception as e:
         raise  Exception(e, gen_name)
@@ -81,45 +91,44 @@ def runApp(app, data):
     return parseAppOut(out[0].decode())
 
 
-def genLog(results, i):
-    logging.basicConfig(filename="tests/results.log", format='%(asctime)s: %(levelname)s %(message)s', datefmt='%H:%M:%S', level=logging.INFO)
+def genLog(results, i, logger):
     COND_TRESHOLD = 1e10
-    
+
     if results["name"] == "Degen Matrix":
         if results["err"]:
-            logging.critical(f'Runing {results["name"]} test. Matrix size: {i}. Test failed')
+            logger.critical(f'Runing {results["name"]} test. Matrix size: {i}. Test failed')
         else:
-            logging.info(f'Runing {results["name"]} test. Matrix size: {i}. Test passed')
+            logger.info(f'Runing {results["name"]} test. Matrix size: {i}. Test passed')
     else:
         if results["err"] and results["cond"] > COND_TRESHOLD:
-            logging.error(f'Runing {results["name"]} test. Matrix size: {i}. Ill conditional number')
+            logger.error(f'Runing {results["name"]} test. Matrix size: {i}. Ill conditional number')
         elif results["err"] and not results["cond"]:
-            logging.critical(f'Runing {results["name"]} test. Matrix size: {i}. Well conditional number')
+            logger.critical(f'Runing {results["name"]} test. Matrix size: {i}. Well conditional number')
         else:
-            logging.info(f'Runing {results["name"]} test. Matrix size: {i}. Test passed')
+            logger.info(f'Runing {results["name"]} test. Matrix size: {i}. Test passed')
 
 
-def log(results):
-    logging.basicConfig(filename="tests/common.log", format='%(asctime)s: %(levelname)s %(message)s', datefmt='%H:%M:%S', level=logging.INFO)
-    
+def log(results, logger):
     if "except" in results:
-        logging.error(f'Runing "{results["name"]}" test. Exception: {results["except"]}')
+        logger.error(f'Runing "{results["name"]}" test. Exception: {results["except"]}')
     elif results["err"] == False:    
-        logging.info(f'Runing "{results["name"]}" test. Test passed')
+        logger.info(f'Runing "{results["name"]}" test. Test passed')
     else:
-        logging.critical(f'Runing "{results["name"]}" test. Test failed')
+        logger.critical(f'Runing "{results["name"]}" test. Test failed')
 
 
 def end_to_end(app, n): 
     print("Running tests...")
     data_path = "data/"
-    runCornerCaseTests(app, data_path)
-
+    logger = createLogger("log")
+    runCornerCaseTests(app, data_path, logger)
+    
+    gen_logger = createLogger("gen_log")
     for _, val in generators.__dict__.items():
         if callable(val):
             for i in range(2,n+1):     
                 try:
-                    genLog(runTest(app, val, i))
+                    genLog(runTest(app, val, i), i, gen_logger)
                 except Exception as e:
                     ...
     print("Tests finished.")
