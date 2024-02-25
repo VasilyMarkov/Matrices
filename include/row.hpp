@@ -92,15 +92,7 @@ template<typename T> struct row_t: private row_buf_t<T> {
 
     row_t& operator-=(const row_t& rhs) noexcept {
         for(auto i = 0; i < size_; ++i) {
-                data_[i] -= rhs[i];
-        }  
-        return *this;
-    }
-
-    row_t& operator/=(double divisor)  {
-        if (std::fabs(divisor) < eps)throw std::runtime_error("Division by zero");
-        for(auto i = 0; i < size_; ++i) {
-                data_[i] /= divisor;
+            data_[i] -= rhs[i];
         }  
         return *this;
     }

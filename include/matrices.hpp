@@ -123,7 +123,7 @@ private:
 
             if (j != max_ind) permutations++;
 
-            if (std::fabs(row_[j][j]) < eps ) 
+            if (std::fabs(row_[j][j]) < eps) 
                 return std::nullopt;
 
             for(auto i = 0; i < size_; ++i) {
