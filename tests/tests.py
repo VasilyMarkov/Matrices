@@ -65,7 +65,7 @@ def runCornerCaseTests(app, data_path, logger):
         log(runTestFromFile(app, data_path+file), logger)
 
 
-def runTest(app, generator, size):
+def runTest(app, generator, size, retMatr = False):
     error = False
     gen_name, matrix, det, cond = generator(size)
     try:
@@ -74,7 +74,11 @@ def runTest(app, generator, size):
             error = True
     except Exception as e:
         raise  Exception(e, gen_name)
-    return {"name": gen_name, "err": error, "det": det, "app_det": app_det, "cond": cond}
+    retDict = {"name": gen_name, "err": error, "det": det, "app_det": app_det, "cond": cond}
+
+    if retMatr:
+        return retDict, matrix
+    return retDict
 
 
 def parseAppOut(out):
@@ -117,20 +121,48 @@ def log(results, logger):
         logger.critical(f'Runing "{results["name"]}" test. Test failed')
 
 
+def log(results, logger):
+    if "except" in results:
+        logger.error(f'Runing "{results["name"]}" test. Exception: {results["except"]}')
+    elif results["err"] == False:    
+        logger.info(f'Runing "{results["name"]}" test. Test passed')
+    else:
+        logger.critical(f'Runing "{results["name"]}" test. Test failed')
+
+
 def end_to_end(app, n): 
     print("Running tests...")
     data_path = "data/"
     logger = createLogger("log")
     runCornerCaseTests(app, data_path, logger)
     
+    perf_errors = 0
     gen_logger = createLogger("gen_log")
+    print(" Perfomance tests...")
     for _, val in generators.__dict__.items():
         if callable(val):
             for i in range(2,n+1):     
                 try:
-                    genLog(runTest(app, val, i), i, gen_logger)
+                    result = runTest(app, val, i)
+                    if results["err"]: 
+                        perf_errors += 1
+                    genLog(result, i, gen_logger)
                 except Exception as e:
                     ...
+    print(f" Perfomance erros: {perf_errors}")
+
+    common_errors = 0
+    error_logger = createLogger("err_log")
+    print(" Common tests...")
+    iterations = 1000
+    matr_size = 10
+    for i in range(iterations):
+        results, matrix = runTest(app, generators.matrix, matr_size, retMatr=True)
+        if results["err"] == True:
+           error_logger.error(matrix)
+           common_errors += 1
+
+    print(f" Common erros: {common_errors}")
     print("Tests finished.")
 
 

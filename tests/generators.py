@@ -1,11 +1,28 @@
 import numpy as np
 
+
+def matrix(size):
+    ref = np.array([-1,1])
+
+    diag = np.array([ref[np.random.randint(2, size = 1)] for _ in range(size)]).reshape(size)
+    det = np.prod(diag)
+    D = np.diag(diag)
+    LU = np.random.rand(size,size)
+    I = np.identity(size)
+    L = np.tril(LU, -1) + I
+    U = np.triu(LU, 1) + I
+    matrix = L @ D @ U
+    cond = np.linalg.cond(matrix)
+
+    return "Matrix", matrix, det, cond
+
+
 def wellMatrix(size):
     pivot = 1.1
     det = pivot**size
     diag = np.zeros((size,size))
     np.fill_diagonal(diag, pivot)
-    LU = np.random.randint(1, 2, (size,size))
+    LU = np.random.randint(1, 3, (size,size))
     I = np.identity(size)
     L = np.tril(LU, -1) + I
     U = np.triu(LU, 1) + I
@@ -55,3 +72,4 @@ def nonSquareMatrix(size):
             col -= 1
     matrix = np.random.normal(0, 2, (row, col))
     return "None Square Matrix", matrix, None, None
+
