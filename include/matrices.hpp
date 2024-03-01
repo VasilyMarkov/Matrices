@@ -120,9 +120,8 @@ private:
             }
 
             swap(row_[j], row_[max_ind]);
-
+            
             if (j != max_ind) permutations++;
-
             if (std::fabs(row_[j][j]) < eps) 
                 return std::nullopt;
 
@@ -138,7 +137,7 @@ private:
             }
             
         }
-        if(permutations % 2 == 0 && permutations != 0) return 1;
+        if(permutations % 2 == 0) return 1;
         return -1;
     }
 };
