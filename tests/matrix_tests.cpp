@@ -100,6 +100,48 @@ TEST(Matrix, subtractionAssignmentOperator) {
     EXPECT_TRUE(m == m_ref);
 }
 
+TEST(Matrix, permutations) {
+    std::vector<std::vector<double>> data = 
+    {
+        {
+            1,0,0,0,
+            0,1,0,0,
+            0,0,1,0,
+            0,0,0,1
+        },
+        {
+            0,1,0,0,
+            1,0,0,0,
+            0,0,1,0,
+            0,0,0,1
+        },
+        {
+            0,0,0,1,
+            0,1,0,0,
+            0,0,1,0,
+            1,0,0,0
+        },
+        {
+            0,0,0,1,
+            0,0,1,0,
+            0,1,0,0,
+            1,0,0,0
+        },
+        {
+            1,0,0,0,
+            0,0,1,0,
+            0,1,0,0,
+            0,0,0,1
+        }
+    };
+    std::vector<double> ans = {1, -1, -1, 1, -1};
+
+    for(auto i = 0; i < ans.size(); ++i) {
+        matr_t<double> m {4, std::begin(data[i]), std::end(data[i])};
+        EXPECT_THAT(m.det(), ans[i]);
+    }
+}
+
 TEST(Matrix, determinant) {
     std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};
