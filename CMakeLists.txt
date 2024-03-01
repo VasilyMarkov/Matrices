@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(matrices)
 
-if (NOT CMAKE_CXX_STANDARD AND NOT CMAKE_CXX_COMPILER)
-        set(CMAKE_CXX_STANDARD 20)
-endif()
-
+# if (NOT CMAKE_CXX_STANDARD AND NOT CMAKE_CXX_COMPILER)
+#         set(CMAKE_CXX_STANDARD 20)
+# endif()
+set(CMAKE_CXX_STANDARD 20)
 option(MATRICES "Building main programm without tests" ON)
 option(TESTS "Building main programm with tests" OFF)
 

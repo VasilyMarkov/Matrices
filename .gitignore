@@ -8,4 +8,6 @@ test
 build
 tests/results.log
 tests/__pycache__/
-tests/common.log
+tests/err_log
+tests/gen_log
+tests/log
