@@ -84,12 +84,18 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     } 
 
     double det() { 
-        auto sign = gaussJordan();
-        if(sign == std::nullopt) return 0;  
-        return sign.value()*diagonalProduct();
+        auto result = gaussJordan();
+        if(result == std::nullopt) return 0;  
+
+        global_permutation = result.value();
+
+        return global_permutation*diagonalProduct();
     }
 
 private:
+
+    int global_permutation = 1;
+
     double diagonalProduct() const noexcept {
         double result = 1;
         for(auto i = 0; i < size_; ++i) {
@@ -129,8 +135,11 @@ private:
             }
             
         }
-        if(permutations % 2 == 0) return 1;
-        return -1;
+        int local_permutation = -1;
+
+        if(permutations % 2 == 0) local_permutation = 1;
+        
+        return local_permutation*global_permutation;
     }
 };
 
