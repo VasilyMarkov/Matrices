@@ -2,6 +2,7 @@
 #include <gmock/gmock.h>
 #include <iostream>
 #include "matrices.hpp"
+#include "utils.hpp"
 
 using namespace testing;
 using namespace matrices;
@@ -100,6 +101,12 @@ TEST(Matrix, subtractionAssignmentOperator) {
     EXPECT_TRUE(m == m_ref);
 }
 
+TEST(Matrix, determinant) {
+    std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
+    matr_t<double> m{3, std::begin(vec), std::end(vec)};
+    EXPECT_THAT(m.det(), -51);
+}
+
 TEST(Matrix, permutations) {
     std::vector<std::vector<double>> data = 
     {
@@ -142,10 +149,21 @@ TEST(Matrix, permutations) {
     }
 }
 
-TEST(Matrix, determinant) {
+TEST(Matrix, checkSignDet) {
     std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};
+    std::vector<double> perm_vec = {5,2,1,2,4,1,2,3,4};
+    matr_t<double> perm_m{3, std::begin(perm_vec), std::end(perm_vec)};
     EXPECT_THAT(m.det(), -51);
+    EXPECT_THAT(perm_m.det(), 51);
+}
+
+TEST(Matrix, doubleCallDet) {
+    std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
+    matr_t<double> m{3, std::begin(vec), std::end(vec)};
+    double ans = -51;
+    EXPECT_THAT(m.det(), ans);
+    EXPECT_THAT(m.det(), ans); 
 }
 
 TEST(Matrix, degenerateMatrix) {
