@@ -50,17 +50,9 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         }
     }
 
-    row_t<T>& operator[](size_t n) {
-        if(n > used_)
-            throw std::out_of_range("out of range");
-        return row_[n];
-    }
+    row_t<T>& operator[](size_t n) { return row_[n]; }
 
-    const row_t<T>& operator[](size_t n) const {
-        if(n > used_)
-            throw std::out_of_range("out of range");
-        return row_[n];
-    }
+    const row_t<T>& operator[](size_t n) const { return row_[n]; }
 
     bool operator==(const matr_t& rhs) const noexcept {
         auto result = true;
@@ -106,15 +98,15 @@ private:
         return result;
     }
 
-    std::optional<int> gaussJordan() {
+    std::optional<int> gaussJordan() noexcept {
         double temp = 0;
         size_t permutations = 0;
         for(auto j = 0; j < size_; ++j) {
             double max = 0;
             size_t max_ind = 0;
             for(auto i = j; i < size_; ++i) {
-                if(std::fabs(row_[i][j]) > max) {
-                    max = std::fabs(row_[i][j]);
+                if(auto row_max = std::fabs(row_[i][j]); row_max > max) {
+                    max = row_max;
                     max_ind = i;
                 }
             }
