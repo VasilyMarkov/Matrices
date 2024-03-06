@@ -7,10 +7,12 @@
 #include <utils.hpp>
 #include <row.hpp>
 #include <optional>
+#include <type_traits>
 
 namespace matrices {
 
-template<typename T> struct matr_buf_t {
+template<typename T, typename = typename std::enable_if<!std::is_same<T, int>::value>::type>
+struct matr_buf_t {
 protected:
     size_t size_, used_ = 0;
     row_t<T>* row_ = nullptr;
@@ -138,7 +140,7 @@ private:
         int local_permutation = -1;
 
         if(permutations % 2 == 0) local_permutation = 1;
-        
+
         return local_permutation*global_permutation;
     }
 };
