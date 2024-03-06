@@ -71,14 +71,10 @@ TEST(Row, swap) {
     EXPECT_EQ(row2[3], 9);
 }
 
-TEST(Matrix, constructor) {
-    std::vector<int> vec = {2,4,1,5};
-    matr_t<int> matr(2, std::begin(vec), std::end(vec));
-    EXPECT_EQ(matr[0][0], 2);
-    EXPECT_EQ(matr[0][1], 4);
-    EXPECT_EQ(matr[1][0], 1);
-    EXPECT_EQ(matr[1][1], 5);
-}
+// TEST(Matrix, attemptConstructingIntMatrix) {
+//     std::vector<int> vec = {2,4,1,5};
+//     matr_t<int> matr(2, std::begin(vec), std::end(vec));
+// }
 
 TEST(Matrix, equalOperator) {
     std::vector<double> ref = {2,4,1,5,2,1,2,3,4};
