@@ -55,7 +55,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
     template<typename It> matr_t(size_t size, It begin, It end): matr_buf_t<T>(size) {
         if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("non square matrix");     
         while(begin != end) {
-            construct(row_+used_++, row_t<T>(begin, begin+size_));
+            construct(row_+used_++, std::move(row_t<T>(begin, begin+size_)));
             begin+=size_;
         }
     }
@@ -102,16 +102,23 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         return os;
     } 
 
+
     double det() { 
-        auto result = gaussJordan();
+        auto m = matr_t<double>::eye(size_);
+        for(auto i = 0; i < size_; ++i) {
+            for(auto j = 0; j < size_; ++j) {
+                m[i][j] = (*this)[i][j];
+                
+            }
+        }
+        auto result = m.gaussJordan();
         if(result == std::nullopt) return 0;  
+        return result.value()*m.diagonalProduct();
 
-        global_permutation = result.value();
-
-        return global_permutation*diagonalProduct();
     }
 
-private:
+
+public:
 
     int global_permutation = 1;
 
@@ -152,7 +159,6 @@ private:
                     }
                 }
             }
-            
         }
         int local_permutation = -1;
 

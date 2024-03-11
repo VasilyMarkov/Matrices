@@ -5,6 +5,8 @@
 #include <cassert>
 #include <cmath>
 #include "utils.hpp"
+
+
 namespace matrices {
 
 template<typename T, typename = typename std::enable_if<std::is_convertible<T, double>::value>> 
@@ -18,12 +20,12 @@ protected:
 
     row_buf_t(size_t n = 0):data_(n == 0 ? nullptr : static_cast<T*>(::operator new(sizeof(T)*n))), size_(n) {}
 
-    row_buf_t(row_buf_t&& buf) noexcept: size_(buf.size_), used_(buf.used_), data_(buf.data_) {
+    row_buf_t (row_buf_t&& buf) noexcept: size_(buf.size_), used_(buf.used_), data_(buf.data_) {
         buf.size_ = 0;
         buf.used_ = 0;
-        buf.data_ = nullptr;
+        buf.data_ = nullptr; 
     };
-
+    
     row_buf_t& operator=(row_buf_t&& buf) noexcept {
         std::swap(data_, buf.data_); 
         std::swap(size_, buf.size_);
