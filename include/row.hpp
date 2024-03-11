@@ -7,7 +7,8 @@
 #include "utils.hpp"
 namespace matrices {
 
-template<typename T> struct row_buf_t {
+template<typename T, typename = typename std::enable_if<std::is_convertible<T, double>::value>> 
+struct row_buf_t {
 protected:
     size_t size_, used_ = 0;
     T* data_ = nullptr;

@@ -11,7 +11,7 @@
 
 namespace matrices {
 
-template<typename T, typename = typename std::enable_if<!std::is_same<T, int>::value>::type>
+template<typename T, typename = typename std::enable_if<std::is_convertible<T, double>::value>>
 struct matr_buf_t {
 protected:
     size_t size_, used_ = 0;
