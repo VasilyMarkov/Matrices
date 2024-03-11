@@ -46,18 +46,20 @@ template<typename T> struct row_t: private row_buf_t<T> {
 
     template<typename It> row_t(It begin, It end): row_buf_t<T>(std::distance(begin, end)) {
         while(begin != end) {
-            construct(data_ + used_++, *begin++);
+            auto it = *begin++;
+            construct(data_ + used_++, std::move(it));
         }
     }
 
     row_t(const row_t& rhs): row_buf_t<T>(rhs.used_){
         while(used_ < rhs.used_) {
-            construct(data_+used_, rhs.data_[used_]);
+            construct(data_+used_, std::move(rhs.data_[used_]));
             used_++;
         }
     }
 
-    row_t(row_t&& rhs) = default;
+    row_t(row_t&& rhs): row_buf_t<T>(std::move(rhs)){}
+    
     row_t& operator=(row_t&& rhs) = default;
 
     row_t& operator=(const row_t& rhs) {

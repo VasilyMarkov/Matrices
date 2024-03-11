@@ -52,6 +52,15 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         }
     }
 
+    matr_t(const matr_t& rhs): matr_t<T>(rhs.used_){
+        while(used_ < rhs.used_) {
+            construct(row_+used_, row_t<T>(rhs[used_]));
+            used_++;
+        }
+    }
+
+    matr_t(matr_t&& rhs): matr_buf_t<T>(std::move(rhs)) {}
+
     row_t<T>& operator[](size_t n) { return row_[n]; }
 
     const row_t<T>& operator[](size_t n) const { return row_[n]; }
