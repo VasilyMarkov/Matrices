@@ -16,6 +16,32 @@ TEST(Row, constructor) {
     EXPECT_EQ(row[3], 4);
 }
 
+TEST(Row, eyeConstructor) {
+    auto row = row_t<double>::eye(2);
+    EXPECT_EQ(row[0], 1);
+    EXPECT_EQ(row[1], 1);
+}
+
+TEST(Row, copyConstructor) {
+    std::vector<int> vec = {1,2,3,4};
+    row_t<int> row(std::begin(vec), std::end(vec));
+    row_t<int> c_row(row);
+    EXPECT_EQ(c_row[0], 1);
+    EXPECT_EQ(c_row[1], 2);
+    EXPECT_EQ(c_row[2], 3);
+    EXPECT_EQ(c_row[3], 4);
+}
+
+TEST(Row, moveConstructor) {
+    std::vector<int> vec = {1,2,3,4};
+    row_t<int> row(std::begin(vec), std::end(vec));
+    row_t<int> m_row(std::move(row));
+    EXPECT_EQ(m_row[0], 1);
+    EXPECT_EQ(m_row[1], 2);
+    EXPECT_EQ(m_row[2], 3);
+    EXPECT_EQ(m_row[3], 4);
+}
+
 TEST(Row, equalOperator) {
     std::vector<double> ref = {2,4,1,5,2,1,2,3,4};
     row_t<double> r_ref{std::begin(ref), std::end(ref)};
@@ -71,10 +97,42 @@ TEST(Row, swap) {
     EXPECT_EQ(row2[3], 9);
 }
 
-// TEST(Matrix, attemptConstructingIntMatrix) {
-//     std::vector<int> vec = {2,4,1,5};
-//     matr_t<int> matr(2, std::begin(vec), std::end(vec));
-// }
+TEST(Matrix, eyeConstructor) {
+    auto matr = matr_t<double>::eye(4);
+    EXPECT_EQ(matr[0][0], 1);
+    EXPECT_EQ(matr[0][1], 1);
+    EXPECT_EQ(matr[1][0], 1);
+    EXPECT_EQ(matr[1][1], 1);
+}
+
+TEST(Matrix, Constructor) {
+    std::vector<int> vec = {1,2,3,4};
+    matr_t<int> matr(2, std::begin(vec), std::end(vec));
+    EXPECT_EQ(matr[0][0], 1);
+    EXPECT_EQ(matr[0][1], 2);
+    EXPECT_EQ(matr[1][0], 3);
+    EXPECT_EQ(matr[1][1], 4);
+}
+
+TEST(Matrix, copyConstructor) {
+    std::vector<double> vec = {1,2,3,4};
+    matr_t<double> matr(2, std::begin(vec), std::end(vec));
+    matr_t<double> c_matr(matr);
+    EXPECT_EQ(c_matr[0][0], 1);
+    EXPECT_EQ(c_matr[0][1], 2);
+    EXPECT_EQ(c_matr[1][0], 3);
+    EXPECT_EQ(c_matr[1][1], 4);
+}
+
+TEST(Matrix, moveConstructor) {
+    std::vector<double> vec = {1,2,3,4};
+    matr_t<double> matr(2, std::begin(vec), std::end(vec));
+    matr_t<double> m_matr(std::move(matr));
+    EXPECT_EQ(m_matr[0][0], 1);
+    EXPECT_EQ(m_matr[0][1], 2);
+    EXPECT_EQ(m_matr[1][0], 3);
+    EXPECT_EQ(m_matr[1][1], 4);
+}
 
 TEST(Matrix, equalOperator) {
     std::vector<double> ref = {2,4,1,5,2,1,2,3,4};
@@ -100,6 +158,12 @@ TEST(Matrix, subtractionAssignmentOperator) {
 TEST(Matrix, determinant) {
     std::vector<double> vec = {2,4,1,5,2,1,2,3,4};
     matr_t<double> m{3, std::begin(vec), std::end(vec)};
+    EXPECT_THAT(m.det(), -51);
+}
+
+TEST(Matrix, intDeterminant) {
+    std::vector<int> vec = {2,4,1,5,2,1,2,3,4};
+    matr_t<int> m{3, std::begin(vec), std::end(vec)};
     EXPECT_THAT(m.det(), -51);
 }
 

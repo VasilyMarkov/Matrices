@@ -15,4 +15,6 @@
     $./matrices < data_file
 ### Tests
     $./run_tests unit 
+### Valgrind tests
+    $./valgrind_tests unit 
 Tests results in tests/result.log

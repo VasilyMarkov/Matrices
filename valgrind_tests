@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+clear
+cd build
+if [ $1 = "unit" ]; then
+    echo "Valgrind tests running..."
+    valgrind ./tests/unit_tests $2
+fi
+
