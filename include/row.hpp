@@ -44,6 +44,14 @@ template<typename T> struct row_t: private row_buf_t<T> {
 
     explicit row_t(size_t n = 0): row_buf_t<T>(n) {}
 
+    static row_t eye(size_t n = 0) {
+        row_t<T> row(n);
+        while(row.used_ < row.size_) {
+            construct(row.data_ + row.used_++, static_cast<T>(1));
+        }
+        return row;
+    }
+
     template<typename It> row_t(It begin, It end): row_buf_t<T>(std::distance(begin, end)) {
         while(begin != end) {
             auto it = *begin++;

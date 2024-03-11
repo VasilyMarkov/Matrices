@@ -44,6 +44,14 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
 
     explicit matr_t(size_t n = 0): matr_buf_t<T>(n) {}
 
+    static matr_t eye(size_t n = 0) {
+        matr_t<T> matr(n);
+        while(matr.used_ < matr.size_) {
+            construct(matr.row_ + matr.used_++, row_t<T>::eye(n));
+        }
+        return matr;
+    }
+
     template<typename It> matr_t(size_t size, It begin, It end): matr_buf_t<T>(size) {
         if(std::distance(begin, end) != size_ * size_) throw std::runtime_error("non square matrix");     
         while(begin != end) {
