@@ -4,10 +4,10 @@
 #include <memory>
 #include <cassert>
 #include <cmath>
-#include <utils.hpp>
-#include <row.hpp>
 #include <optional>
 #include <type_traits>
+#include "utils.hpp"
+#include "row.hpp"
 
 namespace matrices {
 
@@ -66,6 +66,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
             used_++;
         }
     }
+
     template<typename U>
     matr_t(const matr_t<U>& rhs): matr_t<T>(rhs.used_){
         while(used_ < rhs.used_) {
@@ -76,9 +77,9 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
 
     matr_t(matr_t&& rhs): matr_buf_t<T>(std::move(rhs)) {}
 
-    row_t<T>& operator[](size_t n) { return row_[n]; }
+    row_t<T>& operator[](size_t n) noexcept { return row_[n]; }
 
-    const row_t<T>& operator[](size_t n) const { return row_[n]; }
+    const row_t<T>& operator[](size_t n) const noexcept { return row_[n]; }
 
     bool operator==(const matr_t& rhs) const noexcept {
         auto result = true;
@@ -109,15 +110,12 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
         return os;
     } 
 
-
     double det() { 
         matr_t<double> m(*this);
         auto result = m.gaussJordan();
         if(result == std::nullopt) return 0;  
         return result.value()*m.diagonalProduct();
-
     }
-
 
 public:
 
@@ -131,7 +129,7 @@ public:
         return result;
     }
 
-    std::optional<int> gaussJordan() noexcept {
+    std::optional<int> gaussJordan() {
         double temp = 0;
         size_t permutations = 0;
         for(auto j = 0; j < size_; ++j) {

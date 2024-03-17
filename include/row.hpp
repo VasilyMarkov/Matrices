@@ -85,9 +85,9 @@ template<typename T> struct row_t: private row_buf_t<T> {
         return *this;
     }
 
-    T& operator[](size_t n) { return data_[n]; }
+    T& operator[](size_t n) noexcept { return data_[n]; }
 
-    const T& operator[](size_t n) const { return data_[n]; }
+    const T& operator[](size_t n) const noexcept { return data_[n]; }
 
     bool operator==(const row_t& rhs) const noexcept {
         auto result = true;
