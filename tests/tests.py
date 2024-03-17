@@ -149,7 +149,7 @@ def end_to_end(app, n):
                     genLog(result, i, gen_logger)
                 except Exception as e:
                     ...
-    print(f" Perfomance erros: {perf_errors}")
+    print(f" Perfomance errors: {perf_errors}")
 
     common_errors = 0
     error_logger = createLogger("err_log")
@@ -162,7 +162,7 @@ def end_to_end(app, n):
            error_logger.error(matrix)
            common_errors += 1
 
-    print(f" Common erros: {common_errors}")
+    print(f" Common errors: {common_errors}")
     print("Tests finished.")
 
 

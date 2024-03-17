@@ -42,6 +42,16 @@ TEST(Row, moveConstructor) {
     EXPECT_EQ(m_row[3], 4);
 }
 
+TEST(Row, copyConstructorToAnotherType) {
+    std::vector<int> vec = {1,2,3,4};
+    row_t<int> row(std::begin(vec), std::end(vec));
+    row_t<double> c_row(row);
+    EXPECT_EQ(c_row[0], 1);
+    EXPECT_EQ(c_row[1], 2);
+    EXPECT_EQ(c_row[2], 3);
+    EXPECT_EQ(c_row[3], 4);
+}
+
 TEST(Row, equalOperator) {
     std::vector<double> ref = {2,4,1,5,2,1,2,3,4};
     row_t<double> r_ref{std::begin(ref), std::end(ref)};
@@ -132,6 +142,16 @@ TEST(Matrix, moveConstructor) {
     EXPECT_EQ(m_matr[0][1], 2);
     EXPECT_EQ(m_matr[1][0], 3);
     EXPECT_EQ(m_matr[1][1], 4);
+}
+
+TEST(Matrix, copyConstructorToAnotherType) {
+    std::vector<int> vec = {1,2,3,4};
+    matr_t<int> matr(2, std::begin(vec), std::end(vec));
+    matr_t<double> c_matr(matr);
+    EXPECT_EQ(c_matr[0][0], 1);
+    EXPECT_EQ(c_matr[0][1], 2);
+    EXPECT_EQ(c_matr[1][0], 3);
+    EXPECT_EQ(c_matr[1][1], 4);
 }
 
 TEST(Matrix, equalOperator) {
