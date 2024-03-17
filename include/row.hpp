@@ -67,6 +67,13 @@ template<typename T> struct row_t: private row_buf_t<T> {
             used_++;
         }
     }
+    template<typename U>
+    row_t(const row_t<U>& rhs): row_buf_t<T>(rhs.used_){
+        while(used_ < rhs.used_) {
+            construct(data_+used_, std::move(static_cast<T>(rhs.data_[used_])));
+            used_++;
+        }
+    }
 
     row_t(row_t&& rhs): row_buf_t<T>(std::move(rhs)){}
     

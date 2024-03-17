@@ -66,6 +66,13 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
             used_++;
         }
     }
+    template<typename U>
+    matr_t(const matr_t<U>& rhs): matr_t<T>(rhs.used_){
+        while(used_ < rhs.used_) {
+            construct(row_+used_, static_cast<row_t<T>>(row_t<U>(rhs[used_])));
+            used_++;
+        }
+    }
 
     matr_t(matr_t&& rhs): matr_buf_t<T>(std::move(rhs)) {}
 
@@ -104,13 +111,7 @@ template<typename T> struct matr_t: private matr_buf_t<T> {
 
 
     double det() { 
-        auto m = matr_t<double>::eye(size_);
-        for(auto i = 0; i < size_; ++i) {
-            for(auto j = 0; j < size_; ++j) {
-                m[i][j] = (*this)[i][j];
-                
-            }
-        }
+        matr_t<double> m(*this);
         auto result = m.gaussJordan();
         if(result == std::nullopt) return 0;  
         return result.value()*m.diagonalProduct();
